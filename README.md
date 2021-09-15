@@ -69,5 +69,81 @@ Encore deux trois petites choses :
 [...]
 ```
 
+## Mise en place de Phaser 3
+
+Place à l'installation de Phaser : `npm install phaser`. La version utilisée au moment de l'écriture est __3.55.2__. Une fois la commande terminé, il faut mettre à jour le fichier `main.ts` pour initialiser la configuration du jeu. J'ai essayé de mettre un maximum de commentaire dans le code directement. Je complète au besoin ...
+```typescript
+// Je sais c'est pas bien, mais j'aime bien laisser un console.log au démarrage ...
+console.log('-- Lancement du jeu');
+
+// Import de la librairie
+import Phaser from 'phaser'
+
+// Import de la première scene.
+// Les scènes peuvent être vu comme des espaces de jeu : un niveau, un plateau, une zone spécifique (comme le tableau de score).
+import HelloWorldScene from './scenes/HelloWorldScene'
+
+// La configuration
+const config: Phaser.Types.Core.GameConfig = {
+    type: Phaser.AUTO, // Phaser peut fonctionner soit en WebGL soit avec Canvas. En mettant auto, on le laisse choisir en fonction du navigateur,
+    width: 800, // La taille du jeu
+    height: 640,
+    physics: {
+        default: 'arcade', // Phaser intègre un moteur physique par défaut. N'ayant pas eu l'occasion de tester d'autres, je laisse celui par défaut.
+        arcade: {
+            gravity: { y: 200 }, // Ce moteur permet de gérer la gravité 
+            debug: true
+        }
+    },
+    scene: [HelloWorldScene]
+}
+
+// Export
+export default new Phaser.Game(config)
+```
+
+A ce stade, la compilation ne fonctionne pas car la scène par défaut n'existe pas. Il faut ajouter un fichier `src/scenes/hello-wolrd.scene`. Pour cette première scène qui doit juste permettre le chargement d'un logo, une classe simple :
+```typescript
+import Phaser from 'phaser'
+
+/**
+ * La classe est une version simplifiée d'une classe présente dans un des tutos présents ci-dessus
+ * */
+export default class HelloWorldScene extends Phaser.Scene {
+    // Appeler par défaut au démarrage
+    constructor() {
+        // Passe une clé qui permettra de référencer la scène
+        super('hello-world')
+    }
+
+    /***
+     * La méthode est appelée après le constructeur et doit permettre le chargement
+     * des assets ou autres composants nécessaires au jeu
+     */
+    preload() {
+        // Permet de spécifier une URL de base pour le chargement des assets
+        this.load.setBaseURL('http://labs.phaser.io')
+        // Chargement d'un logo avec comme clé logo ...
+        this.load.image('logo', 'assets/sprites/phaser3-logo.png')
+    }
+
+    /**
+     * Après le preload, la méthode create est appelée.
+     * Elle utilise (par exemple), les assets pour créer des éléments comme des images
+     */
+    create() {
+        // Ici, uniquement une image qu'on place dans le jeu
+        const logo = this.add.image(400, 100, 'logo')
+    }
+}
+```
+
+Bon pour le moment, le résultat n'est pas terrible mais au moins on a quelques choses à afficher :
+
+![Premier](./docs/01.png)
+
+## Début du portage
+
+
 
 
