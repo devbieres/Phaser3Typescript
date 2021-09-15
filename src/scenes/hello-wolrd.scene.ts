@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-export default class HelloWorldScene extends Phaser.Scene {
+export class HelloWorldScene extends Phaser.Scene {
     // Appeler par défaut au démarrage
     constructor() {
         // Passe une clé qui permettra de référencer la scène
