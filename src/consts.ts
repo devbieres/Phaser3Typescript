@@ -14,6 +14,6 @@ export enum AssetsList {
     IMG_Platform4x1 = 'grass:4x1',
     IMG_Platform2x1 = 'grass:2x1',
     IMG_Platform1x1 = 'grass:1x1',
-    SPRITESHEET_COINS = 'coin'
-
+    SPRITESHEET_Coins = 'coin',
+    SPRITESHEET_Ennemy = 'spider'
 }

@@ -12,7 +12,7 @@ export class Coin extends Physics.Arcade.Sprite {
 
         // Il faut commencer par appeler le constructeur parent
         // --> Il faut bien passer la bonne texture
-        super(scene, coinModel.x, coinModel.y, AssetsList.SPRITESHEET_COINS);
+        super(scene, coinModel.x, coinModel.y, AssetsList.SPRITESHEET_Coins);
 
         // Ajout à la scéne
         scene.add.existing(this);
@@ -30,7 +30,7 @@ export class Coin extends Physics.Arcade.Sprite {
             key: Coin.COINANIM,
             frameRate: 6, // Vitesse de la rotation
             repeat: -1, // Tourne toujours
-            frames: this.anims.generateFrameNumbers(AssetsList.SPRITESHEET_COINS, { frames: [0, 1, 2, 1] })
+            frames: this.anims.generateFrameNumbers(AssetsList.SPRITESHEET_Coins, { frames: [0, 1, 2, 1] })
         });
         // Une fois crée, on la lance
         this.anims.play(Coin.COINANIM, true);
