@@ -1,5 +1,5 @@
 import { Physics } from 'phaser';
-import { AssetsList } from '../consts';
+import { AssetsList, EventList } from '../consts';
 import { HeroModel } from '../models/hero.model';
 
 // La classe est une extension d'un sprite pour en avoir
@@ -52,6 +52,8 @@ export class Hero extends Physics.Arcade.Sprite {
                 // RAPPEL : 0,0 c'est en haute. Donc quand il saute,
                 // il descend :)
                 this.body.velocity.y = -1 * Hero.JUMP;
+                // Event
+                this.scene.game.events.emit(EventList.HERO_JUMP);
             }
         }
     }

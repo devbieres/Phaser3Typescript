@@ -23,7 +23,12 @@ export class UIScene extends Scene {
         this.add.existing(this.scoreContainer);
 
         // Ecoute des évènements
+        // -- Collecte de pièces
         this.game.events.on(EventList.GET_COIN, this.manageGetCoin, this);
+        // -- Saut
+        this.game.events.on(EventList.HERO_JUMP, () => this.sound.play(AssetsList.SND_Jump));
+        // -- Kill a spider
+        this.game.events.on(EventList.KILL_SPIDER, () => this.sound.play(AssetsList.SND_Stomp));
 
 
     }
@@ -32,7 +37,9 @@ export class UIScene extends Scene {
      * Gère quand notre héros capture une pièce
      */
     private manageGetCoin() {
+        // Mise à jour du score
         this.scoreContainer.value += 1;
+        this.sound.play(AssetsList.SND_Coin);
     }
 
 
