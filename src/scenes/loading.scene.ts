@@ -23,7 +23,7 @@ export class LoadingScene extends Phaser.Scene {
         // Chargement des différents images en lien avec les plateformes
         // /!\ Il faut que les codes images correspondent bien au code présent
         // dans le fichier de niveau
-        this.load.image(AssetsList.IMG_ground, 'images/ground.png');
+        this.load.image(AssetsList.IMG_Ground, 'images/ground.png');
         this.load.image(AssetsList.IMG_Platform8x1, 'images/grass_8x1.png');
         this.load.image(AssetsList.IMG_Platform6x1, 'images/grass_6x1.png');
         this.load.image(AssetsList.IMG_Platform4x1, 'images/grass_4x1.png');
@@ -34,6 +34,10 @@ export class LoadingScene extends Phaser.Scene {
 
         // Gestion du heros
         this.load.image(AssetsList.IMG_Hero, 'images/hero_stopped.png');
+
+        // Gestion des pièces
+        // Il faut indiquer la taille d'une image dans l'image pour qu'il puisse faire le découpage nécessaire
+        this.load.spritesheet(AssetsList.SPRITESHEET_COINS, 'images/coin_animated.png', { frameWidth: 22, frameHeight: 22 });
 
     }
 

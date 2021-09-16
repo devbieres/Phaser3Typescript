@@ -1,6 +1,8 @@
-import Phaser from 'phaser'
+import Phaser, { GameObjects } from 'phaser'
 import { AssetsList, ScenesList } from '../consts'
+import { Coin } from '../entities/coin';
 import { Hero } from '../entities/hero';
+import { CoinModel } from '../models/coin.model';
 import { LevelModel } from '../models/level.model';
 import { PlatformModel } from '../models/plateform.model';
 
@@ -8,8 +10,11 @@ export class LevelOneScene extends Phaser.Scene {
 
     private levelName = 'level01';
 
-    // Variable contenant les plateformes
+    // Variables
+    // -- Les plateformes
     protected _plateforms: Phaser.GameObjects.Sprite[] = [];
+    // -- Les pièces
+    protected _coins: Phaser.GameObjects.Sprite[] = [];
 
     // Variable contenant le hero.
     // Elle est marqué ! car elle sera normalement tout le temps instanciée.
@@ -41,8 +46,10 @@ export class LevelOneScene extends Phaser.Scene {
         this._createLevel(this.cache.json.get(this.levelName));
 
         // Définition des collisions
+        // -- Hero avec Plateforme
         this.physics.add.collider(this._hero, this._plateforms);
-
+        // -- Hero avec Pièce
+        this.physics.add.overlap(this._hero, this._coins, (hero, coin) => coin.destroy());
     }
 
     /**
@@ -54,6 +61,13 @@ export class LevelOneScene extends Phaser.Scene {
 
         // Gestion du heros
         this._hero = new Hero(this, data.hero);
+
+        // Gestion des pièces
+        data.coins.forEach((coinModel: CoinModel) => {
+            this._coins.push(
+                new Coin(this, coinModel)
+            );
+        }, this);
 
     }
 
@@ -69,4 +83,6 @@ export class LevelOneScene extends Phaser.Scene {
         // Ajout au tableau
         this._plateforms.push(sprite);
     }
+
+
 }
