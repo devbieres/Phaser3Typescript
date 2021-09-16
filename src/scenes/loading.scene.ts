@@ -33,7 +33,8 @@ export class LoadingScene extends Phaser.Scene {
         // pas nécessaire.
 
         // Gestion du heros
-        this.load.image(AssetsList.IMG_Hero, 'images/hero_stopped.png');
+        // this.load.image(AssetsList.IMG_Hero, 'images/hero_stopped.png');
+        this.load.spritesheet(AssetsList.SPRITESHEET_Hero, 'images/hero.png', { frameWidth: 36, frameHeight: 42 });
 
         // Gestion des pièces
         // Il faut indiquer la taille d'une image dans l'image pour qu'il puisse faire le découpage nécessaire
