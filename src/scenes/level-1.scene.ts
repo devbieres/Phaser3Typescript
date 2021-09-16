@@ -60,6 +60,8 @@ export class LevelOneScene extends Phaser.Scene {
         // -- Araignes avec plateforme & murs
         this.physics.add.collider(this._spider, this._plateforms);
         this.physics.add.collider(this._spider, this._enemyWalls);
+        // -- Hero avec araignés
+        this.physics.add.overlap(this._hero, this._spider, this._handleHeroAndSpider, null, this);
     }
 
     /**
@@ -82,7 +84,7 @@ export class LevelOneScene extends Phaser.Scene {
         // Gestion des araignées
         data.spiders.forEach((spiderModel: SpiderModel, index: number) => {
             this._spider.push(
-                new Spider(index, this, spiderModel)
+                new Spider(this, spiderModel)
             );
         }, this);
 
@@ -108,6 +110,30 @@ export class LevelOneScene extends Phaser.Scene {
             new EnemyWall(this, sprite.x + sprite.width, sprite.y, EnemyWallSide.right)
         );
     }
+
+    /**
+     * Gestion d'un contact entre notre hero et une araigné
+     * Tout va dépendre qui touche qui et comment
+     * @param hero Le hero
+     * @param spider L'araigné
+     */
+    private _handleHeroAndSpider(heroGO: GameObjects.GameObject, spiderGO: GameObjects.GameObject) {
+        // Cast
+        const hero = heroGO as Hero;
+        const spider = spiderGO as Spider;
+
+        // Est-ce que le heros est en train de tomber ?
+        if (hero.isFalling()) {
+            // Oui alors, on considère qu'il peut tuer l'araigné
+            hero.bounce();
+            spider.die();
+        } else {
+            // Oups ... Pour le moment, on relance le jeu
+            this.scene.restart();
+        }
+
+
+    } // _handleHeroAndSpider
 
 
 }

@@ -47,7 +47,7 @@ export class Spider extends Physics.Arcade.Sprite {
         this.scene.anims.create({
             key: Spider.DIEANIM,
             frameRate: 8, // Vitesse de la rotation
-            repeat: -2, // Tourne toujours
+            repeat: 0, // Tourne toujours
             frames: this.anims.generateFrameNumbers(AssetsList.SPRITESHEET_Spider, { frames: [0, 4, 0, 4, 0, 4, 3, 3, 3, 3, 3, 3] })
         });
         // Une fois crée, on la lance
@@ -211,4 +211,130 @@ Bon pour le moment, ils sont toujours visibles à cause du mode debug de la grav
 
 ## Let's fight !
 
+Tout se joue au niveau des collisions qu'il va falloir détecter et gérer.
+
+Pour commencer, ajout de méthodes sur le héros :
+* Une méthode pour savoir s'il est entrain de tomber,
+* une méthode pour qu'il puisse faire un petit rebond.
+
+```typescript
+// [...]
+export class Hero extends Physics.Arcade.Sprite {
+    // [...]
+    // Une vitesse de rebond 
+    static readonly BOUNCE_SPEED = 200;
+    // [...]
+
+    /**
+     * Vrai si la vélocité y est > 0
+     * @returns bool
+     */
+    public isFalling(): boolean {
+        return this.body.velocity.y > 0;
+    }
+
+    /**
+     * Un petit effet rebond
+     */
+    public bounce() {
+        this.body.velocity.y = -Hero.BOUNCE_SPEED;
+    }
+}
+
+```
+
+Idem au niveau de l'araigné. Une méthode qui va venir gérer son décès :
+```typescript
+// [...]
+export class Spider extends Physics.Arcade.Sprite {
+    // [...]
+    /**
+     * Une araignée meurt
+     */
+    public die() {
+        // On commence par rendre son corps inactif
+        // Pour que le hero ne meurt pas à cause du cadavre
+        this.body.enable = false;
+        // Arrêt de l'animation en cours
+        this.anims.stop();
+        // Ecoute pour savoir quand on peut supprimer
+        // Quand l'animation est terminée
+        this.once('animationcomplete', () => this.destroy(), this);
+        // Joue l'animation de mort
+        this.anims.play(Spider.DIEANIM);
+    }
+}
+```
+
+A noter qu'il faut également mettre à jour la méthode preUpdate. En effet, en désactivant le body il n'est plus accessible donc risque d'erreur dans l'exécution :
+```typescript
+// [...]
+export class Spider extends Physics.Arcade.Sprite {
+     // [...]
+         /**
+     * Gestion de la mise à jour entre deux refresh
+     * @param time 
+     * @param delta 
+     */
+    preUpdate(time, delta) {
+    // Nécessaire pour que l'animation fonctionne encore
+    super.preUpdate(time, delta);
+
+    // Récupération du body avec le bon type
+    const body = this.getBody();
+
+    if (this.body) {
+        if (body.touching.right || body.blocked.right) {
+            body.velocity.x = -1 * Spider.SPEED;
+        }
+        else if (body.touching.left || body.blocked.left) {
+            body.velocity.x = Spider.SPEED;
+        }
+    }
+        
+}
+
+```
+
+et finalement la gestion de la collision :
+```typescript
+// [...]
+export class LevelOneScene extends Phaser.Scene {
+    // [...]
+    create() {
+        // [...]
+        // -- Hero avec araignés
+        this.physics.add.overlap(this._hero, this._spider, this._handleHeroAndSpider, null, this);
+    }
+
+     /**
+     * Gestion d'un contact entre notre hero et une araigné
+     * Tout va dépendre qui touche qui et comment
+     * @param hero Le hero
+     * @param spider L'araigné
+     */
+    private _handleHeroAndSpider(heroGO: GameObjects.GameObject, spiderGO: GameObjects.GameObject) {
+        // Cast
+        const hero = heroGO as Hero;
+        const spider = spiderGO as Spider;
+
+        // Est-ce que le heros est en train de tomber ?
+        if (hero.isFalling()) {
+            // Oui alors, on considère qu'il peut tuer l'araigné
+            // Un petit rebond pour la classe
+            hero.bounce();
+            // L'araigné meurt
+            spider.die();
+        } else {
+            // Oups ... Pour le moment, on relance le jeu
+            this.scene.restart();
+        }
+
+    } // _handleHeroAndSpider
+}
+```
+
+## Petit point étape
+
+Ca avance : le joueur bouge, les araignés aussi, il peut collecter des pièces, combat possible ... Ca commence à ressemble à quelque chose.
 

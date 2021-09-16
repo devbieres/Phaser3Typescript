@@ -8,6 +8,7 @@ export class Hero extends Physics.Arcade.Sprite {
 
     // Vitesse
     static readonly SPEED = 200;
+    static readonly BOUNCE_SPEED = 200;
     static readonly JUMP = 600;
 
     // Accès au clavier
@@ -53,6 +54,21 @@ export class Hero extends Physics.Arcade.Sprite {
                 this.body.velocity.y = -1 * Hero.JUMP;
             }
         }
+    }
+
+    /**
+     * Vrai si la vélocité y est > 0
+     * @returns bool
+     */
+    public isFalling(): boolean {
+        return this.body.velocity.y > 0;
+    }
+
+    /**
+     * Un petit effet rebond
+     */
+    public bounce() {
+        this.body.velocity.y = -Hero.BOUNCE_SPEED;
     }
 
 

@@ -10,21 +10,16 @@ export class Spider extends Physics.Arcade.Sprite {
     static readonly DIEANIM = 'die';
     static readonly SPEED = 100;
 
-    private index: number;
-
-
     protected getBody(): Phaser.Physics.Arcade.Body {
         return this.body as Phaser.Physics.Arcade.Body;
     }
 
-    constructor(index: number, scene: Phaser.Scene, spiderModel: SpiderModel) {
+    constructor(scene: Phaser.Scene, spiderModel: SpiderModel) {
 
 
         // Il faut commencer par appeler le constructeur parent
         // --> Il faut bien passer la bonne texture
         super(scene, spiderModel.x, spiderModel.y, AssetsList.SPRITESHEET_Spider);
-
-        this.index = index;
 
         // Ajout à la scéne
         scene.add.existing(this);
@@ -48,7 +43,7 @@ export class Spider extends Physics.Arcade.Sprite {
         this.scene.anims.create({
             key: Spider.DIEANIM,
             frameRate: 8, // Vitesse de la rotation
-            repeat: -2, // Tourne toujours
+            repeat: 0,
             frames: this.anims.generateFrameNumbers(AssetsList.SPRITESHEET_Spider, { frames: [0, 4, 0, 4, 0, 4, 3, 3, 3, 3, 3, 3] })
         });
         // Une fois crée, on la lance
@@ -56,6 +51,11 @@ export class Spider extends Physics.Arcade.Sprite {
 
     }
 
+    /**
+     * Gestion de la mise à jour entre deux refresh
+     * @param time 
+     * @param delta 
+     */
     preUpdate(time, delta) {
         // Nécessaire pour que l'animation fonctionne encore
         super.preUpdate(time, delta);
@@ -63,12 +63,32 @@ export class Spider extends Physics.Arcade.Sprite {
         // Récupération du body avec le bon type
         const body = this.getBody();
 
-        if (body.touching.right || body.blocked.right) {
-            body.velocity.x = -1 * Spider.SPEED;
+        if (this.body) {
+            if (body.touching.right || body.blocked.right) {
+                body.velocity.x = -1 * Spider.SPEED;
+            }
+            else if (body.touching.left || body.blocked.left) {
+                body.velocity.x = Spider.SPEED;
+            }
         }
-        else if (body.touching.left || body.blocked.left) {
-            body.velocity.x = Spider.SPEED;
-        }
+        // }
+    } // /preUpdate
+
+
+    /**
+     * Une araignée meurt
+     */
+    public die() {
+        // On commence par rendre son corps inactif
+        // Pour que le hero ne meurt pas à cause du cadavre
+        this.body.enable = false;
+        // Arrêt de l'animation en cours
+        this.anims.stop();
+        // Ecoute pour savoir quand on peut supprimer
+        // Quand l'animation est terminée
+        this.once('animationcomplete', () => this.destroy(), this);
+        // Joue l'animation de mort
+        this.anims.play(Spider.DIEANIM);
     }
 
 }
