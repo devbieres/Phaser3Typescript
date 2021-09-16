@@ -10,11 +10,21 @@ export class Spider extends Physics.Arcade.Sprite {
     static readonly DIEANIM = 'die';
     static readonly SPEED = 100;
 
-    constructor(scene: Phaser.Scene, spiderModel: SpiderModel) {
+    private index: number;
+
+
+    protected getBody(): Phaser.Physics.Arcade.Body {
+        return this.body as Phaser.Physics.Arcade.Body;
+    }
+
+    constructor(index: number, scene: Phaser.Scene, spiderModel: SpiderModel) {
+
 
         // Il faut commencer par appeler le constructeur parent
         // --> Il faut bien passer la bonne texture
         super(scene, spiderModel.x, spiderModel.y, AssetsList.SPRITESHEET_Spider);
+
+        this.index = index;
 
         // Ajout à la scéne
         scene.add.existing(this);
@@ -22,9 +32,9 @@ export class Spider extends Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         // Quelques ajustements 
-        const body = this.body as Phaser.Physics.Arcade.Body;
+        const body = this.getBody();
         body.setCollideWorldBounds(true); // au cas où pour qu'ils sortent du jeu,
-        body.velocity.x = Spider.SPEED; // ils bougent tout le temps et tout seul
+        this.body.velocity.x = Spider.SPEED; // ils bougent tout le temps et tout seul
 
         // Création des animations :
         // -- La première quand il bouge
@@ -46,7 +56,19 @@ export class Spider extends Physics.Arcade.Sprite {
 
     }
 
-    preUpdate() {
+    preUpdate(time, delta) {
+        // Nécessaire pour que l'animation fonctionne encore
+        super.preUpdate(time, delta);
 
+        // Récupération du body avec le bon type
+        const body = this.getBody();
+
+        if (body.touching.right || body.blocked.right) {
+            body.velocity.x = -1 * Spider.SPEED;
+        }
+        else if (body.touching.left || body.blocked.left) {
+            body.velocity.x = Spider.SPEED;
+        }
     }
+
 }

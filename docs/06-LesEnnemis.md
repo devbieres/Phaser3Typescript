@@ -78,3 +78,137 @@ A ce stade, vous devez avoir des araignés qui apparaissent mais qui tombent des
 
 Même si elles ne peuvent pas sortir du jeu, rien ne les bloquent autrement donc elles bougent ...
 
+## Bloqué !
+
+Une première chose simple à faire; indiquer dans la gestion des collisions que les araignés sont bloquées par les platesformes : 
+```
+create() {
+    // [...]
+    // -- Araignes avec plateforme
+    this.physics.add.collider(this._spider, this._plateforms);
+}
+```
+## Mais pas assez
+
+La solution proposée dans le tutoriel initial est de mettre en place des murs invisibles qui vont bloqués nos petites bêtes et leur demander de repartir en arrière.
+
+Les premières étapes sont identiques et connues depuis quelques temps maintenant :
+* Chargement de l'image : ```this.load.image(AssetsList.IMG_Walls, 'images/invisible_wall.png');```,
+* Création d'une classe enemyWalls :
+```typescript
+import { Physics } from 'phaser';
+import { AssetsList } from '../consts';
+
+// Pour bien gérer la position, il sera nécessaire d'indiquer
+// si le mur est sur le côté gauche ou droit de la plateforme
+export enum EnemyWallSide {
+    left = 'left',
+    right = 'right'
+}
+
+// La classe est une extension d'un sprite pour en avoir
+// toutes les méthodes est service
+export class EnemyWall extends Physics.Arcade.Sprite {
+
+    static readonly COINANIM = 'rotate';
+
+    constructor(scene: Phaser.Scene, x: number, y: number, side: EnemyWallSide) {
+
+        // Il faut commencer par appeler le constructeur parent
+        // --> Il faut bien passer la bonne texture
+        super(scene, x, y, AssetsList.IMG_Walls);
+
+        // Ajout à la scéne
+        scene.add.existing(this);
+        // Mais également faisant partie de la "physic"
+        scene.physics.add.existing(this);
+
+        // Gestion du corps (comme plateforme)
+        // Sinon les pièces tombent ou peuvent bouger
+        const body = this.body as Phaser.Physics.Arcade.Body;
+        body.setAllowGravity(false);
+        body.setImmovable(true);
+
+    }
+}
+```
+* Création des murs au même moment que la création des plateformes :
+```typescript
+// [...]
+private _createPlatform(platformModel: PlatformModel) {
+    // ---- Création de la plateforme
+    // [...]
+
+    // --- Création des murs invisibles de chaque côté de la plateforme
+    this._enemyWalls.push(
+        new EnemyWall(this, sprite.x, sprite.y, EnemyWallSide.left),
+        new EnemyWall(this, sprite.x + sprite.width, sprite.y, EnemyWallSide.right)
+    );
+}
+```
+
+Ce qui bloque déjà un peu mieux :
+
+![10](./10.png).
+
+Par contre, les murs ne sont très bien placés. Cela est du au fait qu'ils sont placés en fontion de leur centre. Il faut effectuer une modification de l'origine au moment de leur création :
+```typescript
+constructor([...]) {
+    // [...]
+    // Correction du point d'origine
+    // C'est toujours en bas y = 1
+    // par contre si mur de gauche, le point d'origine est à droite (1,1)
+    // si mur de droite c'est à gauche (0, 1)
+    this.setOrigin(
+        side === EnemyWallSide.left ? 1 : 0,
+        1
+    );
+}
+```
+
+Les murs sont déjà mieux placés :
+
+![11](./11.png).
+
+Par contre, elles restent toujours bêtement dans le coin sans revenir sur leur pas.
+
+## Aller - retour
+
+Pour changer cela, il est possible d'utiliser la méthode preUpdate de la classe Spider pour changer de sens en fonction des contacts :
+```typescript
+preUpdate(time, delta) {
+    // Nécessaire pour que l'animation fonctionne encore
+    super.preUpdate(time, delta);
+
+    // Récupération du body avec le bon type
+    const body = this.getBody();
+
+    // Mise à jour en fonction des contacts
+    if (body.touching.right || body.blocked.right) {
+        body.velocity.x = -1 * Spider.SPEED;
+    }
+    else if (body.touching.left || body.blocked.left) {
+        body.velocity.x = Spider.SPEED;
+    }
+}
+```
+
+Deux points qui m'ont fait perdre du temps :
+* preUpdate : il faut appeler la version parente. Sinon certaines actions sont perdues comme les animations,
+* velocity.x passe à 0: c'est assez logique quand l'araigné est bloqué sa vitesse passe à 0. Il est donc obligatoire de la ré-initialiser.
+
+Les araignés se déplacent et restent sur les plateaux. Il reste simplement à rendre invisible les murs ce qui est faisable directement dans la classe associée :
+```typescript
+// [...]
+constructor() {
+    // [...]
+    // Pas besoin de les voir
+    this.setVisible(false);
+}
+```
+
+Bon pour le moment, ils sont toujours visibles à cause du mode debug de la gravité.
+
+## Let's fight !
+
+

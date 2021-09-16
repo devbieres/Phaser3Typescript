@@ -1,6 +1,7 @@
 import Phaser, { GameObjects } from 'phaser'
 import { AssetsList, ScenesList } from '../consts'
 import { Coin } from '../entities/coin';
+import { EnemyWall, EnemyWallSide } from '../entities/enemyWall';
 import { Hero } from '../entities/hero';
 import { Spider } from '../entities/spider';
 import { CoinModel } from '../models/coin.model';
@@ -19,6 +20,8 @@ export class LevelOneScene extends Phaser.Scene {
     protected _coins: Phaser.GameObjects.Sprite[] = [];
     // -- Les ennemies
     protected _spider: Phaser.GameObjects.Sprite[] = [];
+    // -- Les murs invisibles
+    protected _enemyWalls: Phaser.GameObjects.Sprite[] = [];
 
     // Variable contenant le hero.
     // Elle est marqué ! car elle sera normalement tout le temps instanciée.
@@ -54,6 +57,9 @@ export class LevelOneScene extends Phaser.Scene {
         this.physics.add.collider(this._hero, this._plateforms);
         // -- Hero avec Pièce
         this.physics.add.overlap(this._hero, this._coins, (hero, coin) => coin.destroy());
+        // -- Araignes avec plateforme & murs
+        this.physics.add.collider(this._spider, this._plateforms);
+        this.physics.add.collider(this._spider, this._enemyWalls);
     }
 
     /**
@@ -74,15 +80,16 @@ export class LevelOneScene extends Phaser.Scene {
         }, this);
 
         // Gestion des araignées
-        data.spiders.forEach((spiderModel: SpiderModel) => {
+        data.spiders.forEach((spiderModel: SpiderModel, index: number) => {
             this._spider.push(
-                new Spider(this, spiderModel)
+                new Spider(index, this, spiderModel)
             );
         }, this);
 
     }
 
     private _createPlatform(platformModel: PlatformModel) {
+        // ---- Création de la plateforme
         // Les platesformes devant être physics, elles sont ajoutées à cette dimension
         const sprite = this.physics.add.sprite(platformModel.x, platformModel.y, platformModel.image);
         // Par contre, pour éviter qu'elle tombe, il faut leur dire que la gravité n'a pas d'impact
@@ -93,6 +100,13 @@ export class LevelOneScene extends Phaser.Scene {
         sprite.setOrigin(0, 0);
         // Ajout au tableau
         this._plateforms.push(sprite);
+
+        // --- Création des murs invisibles
+        // de chaque côté de la plateforme
+        this._enemyWalls.push(
+            new EnemyWall(this, sprite.x, sprite.y, EnemyWallSide.left),
+            new EnemyWall(this, sprite.x + sprite.width, sprite.y, EnemyWallSide.right)
+        );
     }
 
 
