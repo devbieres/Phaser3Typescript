@@ -37,7 +37,8 @@ export class LoadingScene extends Phaser.Scene {
 
         // Gestion des pièces
         // Il faut indiquer la taille d'une image dans l'image pour qu'il puisse faire le découpage nécessaire
-        this.load.spritesheet(AssetsList.SPRITESHEET_COINS, 'images/coin_animated.png', { frameWidth: 22, frameHeight: 22 });
+        this.load.spritesheet(AssetsList.SPRITESHEET_Coins, 'images/coin_animated.png', { frameWidth: 22, frameHeight: 22 });
+        this.load.spritesheet(AssetsList.SPRITESHEET_Spider, 'images/spider.png', { frameWidth: 42, frameHeight: 32 });
 
     }
 

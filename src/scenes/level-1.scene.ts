@@ -2,9 +2,11 @@ import Phaser, { GameObjects } from 'phaser'
 import { AssetsList, ScenesList } from '../consts'
 import { Coin } from '../entities/coin';
 import { Hero } from '../entities/hero';
+import { Spider } from '../entities/spider';
 import { CoinModel } from '../models/coin.model';
 import { LevelModel } from '../models/level.model';
 import { PlatformModel } from '../models/plateform.model';
+import { SpiderModel } from '../models/spider.model';
 
 export class LevelOneScene extends Phaser.Scene {
 
@@ -15,6 +17,8 @@ export class LevelOneScene extends Phaser.Scene {
     protected _plateforms: Phaser.GameObjects.Sprite[] = [];
     // -- Les pièces
     protected _coins: Phaser.GameObjects.Sprite[] = [];
+    // -- Les ennemies
+    protected _spider: Phaser.GameObjects.Sprite[] = [];
 
     // Variable contenant le hero.
     // Elle est marqué ! car elle sera normalement tout le temps instanciée.
@@ -66,6 +70,13 @@ export class LevelOneScene extends Phaser.Scene {
         data.coins.forEach((coinModel: CoinModel) => {
             this._coins.push(
                 new Coin(this, coinModel)
+            );
+        }, this);
+
+        // Gestion des araignées
+        data.spiders.forEach((spiderModel: SpiderModel) => {
+            this._spider.push(
+                new Spider(this, spiderModel)
             );
         }, this);
 
