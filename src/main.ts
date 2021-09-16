@@ -8,6 +8,7 @@ import Phaser from 'phaser'
 // Les scènes peuvent être vu comme des espaces de jeu : un niveau, un plateau, une zone spécifique (comme le tableau de score).
 // import HelloWorldScene from './scenes/hello-wolrd.scene';
 import { HelloWorldScene, LevelOneScene, LoadingScene } from "./scenes";
+import { UIScene } from './scenes/ui.scene';
 
 // La configuration
 const config: Phaser.Types.Core.GameConfig = {
@@ -23,7 +24,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     // Remplacement de HelloWorld par les nouvelles 
     // scene: [HelloWorldScene],
-    scene: [LoadingScene, LevelOneScene]
+    scene: [LoadingScene, LevelOneScene, UIScene]
 }
 
 // Export

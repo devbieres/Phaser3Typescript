@@ -1,5 +1,5 @@
 import Phaser, { GameObjects } from 'phaser'
-import { AssetsList, ScenesList } from '../consts'
+import { AssetsList, EventList, ScenesList } from '../consts'
 import { Coin } from '../entities/coin';
 import { EnemyWall, EnemyWallSide } from '../entities/enemyWall';
 import { Hero } from '../entities/hero';
@@ -56,7 +56,12 @@ export class LevelOneScene extends Phaser.Scene {
         // -- Hero avec Plateforme
         this.physics.add.collider(this._hero, this._plateforms);
         // -- Hero avec Pièce
-        this.physics.add.overlap(this._hero, this._coins, (hero, coin) => coin.destroy());
+        this.physics.add.overlap(this._hero, this._coins, (hero, coin) => {
+            // Destruction de la pièce
+            coin.destroy()
+            // Events indiquant que la pièce a été captée
+            this.game.events.emit(EventList.GET_COIN);
+        });
         // -- Araignes avec plateforme & murs
         this.physics.add.collider(this._spider, this._plateforms);
         this.physics.add.collider(this._spider, this._enemyWalls);

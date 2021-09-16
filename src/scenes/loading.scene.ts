@@ -38,6 +38,11 @@ export class LoadingScene extends Phaser.Scene {
         // Gestion des pièces
         // Il faut indiquer la taille d'une image dans l'image pour qu'il puisse faire le découpage nécessaire
         this.load.spritesheet(AssetsList.SPRITESHEET_Coins, 'images/coin_animated.png', { frameWidth: 22, frameHeight: 22 });
+        // La pièce pour le score
+        this.load.image(AssetsList.IMG_Coin, 'images/coin_icon.png');
+
+        // Le tableau des scores
+        this.load.image(AssetsList.IMG_FontNumber, 'images/numbers.png');
 
         // Gestion des araignées
         this.load.spritesheet(AssetsList.SPRITESHEET_Spider, 'images/spider.png', { frameWidth: 42, frameHeight: 32 });
@@ -55,5 +60,6 @@ export class LoadingScene extends Phaser.Scene {
         // Comme il s'agit uniquement de la page de chargement,
         // Ouverture du premier tableau : La scene 1
         this.scene.start(ScenesList.Level1Scene);
+        this.scene.run(ScenesList.UIScene);
     }
 }
