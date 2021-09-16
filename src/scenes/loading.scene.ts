@@ -50,6 +50,11 @@ export class LoadingScene extends Phaser.Scene {
         // Les murs invisibles
         this.load.image(AssetsList.IMG_Walls, 'images/invisible_wall.png');
 
+        // Les différents sons :
+        this.load.audio(AssetsList.SND_Coin, 'audio/coin.wav');
+        this.load.audio(AssetsList.SND_Jump, 'audio/jump.wav');
+        this.load.audio(AssetsList.SND_Stomp, 'audio/stomp.wav');
+
     }
 
     /**

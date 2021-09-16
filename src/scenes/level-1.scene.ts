@@ -132,6 +132,7 @@ export class LevelOneScene extends Phaser.Scene {
             // Oui alors, on considère qu'il peut tuer l'araigné
             hero.bounce();
             spider.die();
+            this.game.events.emit(EventList.KILL_SPIDER);
         } else {
             // Oups ... Pour le moment, on relance le jeu
             this.scene.restart();
