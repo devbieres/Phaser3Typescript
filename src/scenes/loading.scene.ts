@@ -19,6 +19,22 @@ export class LoadingScene extends Phaser.Scene {
         this.load.setBaseURL('./assets/')
         // Chargement du fond d'écran. Utilisation d'une constante.
         this.load.image(AssetsList.IMG_BackGround, 'images/background.png');
+
+        // Chargement des différents images en lien avec les plateformes
+        // /!\ Il faut que les codes images correspondent bien au code présent
+        // dans le fichier de niveau
+        this.load.image(AssetsList.IMG_ground, 'images/ground.png');
+        this.load.image(AssetsList.IMG_Platform8x1, 'images/grass_8x1.png');
+        this.load.image(AssetsList.IMG_Platform6x1, 'images/grass_6x1.png');
+        this.load.image(AssetsList.IMG_Platform4x1, 'images/grass_4x1.png');
+        this.load.image(AssetsList.IMG_Platform2x1, 'images/grass_2x1.png');
+        this.load.image(AssetsList.IMG_Platform1x1, 'images/grass_1x1.png');
+        // Vu que les codes sont dans les images, l'utilisation d'enum n'était peut-être
+        // pas nécessaire.
+
+        // Gestion du heros
+        this.load.image(AssetsList.IMG_Hero, 'images/hero_stopped.png');
+
     }
 
     /**
