@@ -10,10 +10,11 @@ import { CoinModel } from '../models/coin.model';
 import { LevelModel } from '../models/level.model';
 import { PlatformModel } from '../models/plateform.model';
 import { SpiderModel } from '../models/spider.model';
+import { StartModel } from '../models/start.model';
 
 export class LevelOneScene extends Phaser.Scene {
 
-    private levelName = 'level01';
+    private currentLevel = 0;
 
     // Variables
     // -- Les plateformes
@@ -39,18 +40,12 @@ export class LevelOneScene extends Phaser.Scene {
         super(ScenesList.Level1Scene);
     }
 
-    /***
-     * A ce stade, les éléments ont déjà été chargés par la première scène.
-     * Donc ici, normalement, rien à faire
-     */
-    preload() {
-        // Chargement du niveau
-        this.load.json(this.levelName, `./assets/data/${this.levelName}.json`);
-    }
-
     /**
      */
-    create() {
+    create(startModel: StartModel) {
+
+        // Récupération des informations
+        this.currentLevel = (startModel.level || 0) % 2;
 
         // Pas besoin de le charger car déjà fait dans la scène de chargement
         const background = this.add.image(0, 0, AssetsList.IMG_BackGround)
@@ -58,7 +53,7 @@ export class LevelOneScene extends Phaser.Scene {
         background.setOrigin(0, 0);
 
         // Creation du niveau
-        this._createLevel(this.cache.json.get(this.levelName));
+        this._createLevel(this.cache.json.get(`level:0${this.currentLevel}`));
 
         // Définition des collisions
         // -- Hero avec Plateforme
@@ -91,7 +86,8 @@ export class LevelOneScene extends Phaser.Scene {
                 // Event
                 this.game.events.emit(EventList.OPEN_DOOR);
                 // Relance du jeu
-                this.scene.restart();
+                // this.scene.restart({ level: this.currentLevel + 1, lost: false });
+                this._restartScene({ level: this.currentLevel + 1, lost: false });
             },
             // Est-ce qu'il faut gérer la collision
             () => {
@@ -172,11 +168,22 @@ export class LevelOneScene extends Phaser.Scene {
             this.game.events.emit(EventList.KILL_SPIDER);
         } else {
             // Oups ... Pour le moment, on relance le jeu
-            this.scene.restart();
+            // this.scene.restart({ level: this.currentLevel, lost: true });
+            this._restartScene({ level: this.currentLevel, lost: true });
         }
 
 
     } // _handleHeroAndSpider
 
+    /**
+     * Relance la scène
+     * @param startModel Infos
+     */
+    private _restartScene(startModel: StartModel) {
+        // Event
+        this.game.events.emit(EventList.GAME_END, startModel);
+        // Relance
+        this.scene.restart(startModel);
+    }
 
 }

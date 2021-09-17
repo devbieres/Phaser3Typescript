@@ -20,6 +20,10 @@ export class LoadingScene extends Phaser.Scene {
         // Chargement du fond d'écran. Utilisation d'une constante.
         this.load.image(AssetsList.IMG_BackGround, 'images/background.png');
 
+        // Chargement du niveau
+        this.load.json('level:00', `data/level00.json`);
+        this.load.json('level:01', `data/level01.json`);
+
         // Chargement des différents images en lien avec les plateformes
         // /!\ Il faut que les codes images correspondent bien au code présent
         // dans le fichier de niveau
