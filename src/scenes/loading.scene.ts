@@ -76,7 +76,7 @@ export class LoadingScene extends Phaser.Scene {
     create() {
         // Comme il s'agit uniquement de la page de chargement,
         // Ouverture du premier tableau : La scene 1
-        this.scene.start(ScenesList.Level1Scene);
+        this.scene.start(ScenesList.LevelScene);
         this.scene.run(ScenesList.UIScene);
     }
 }
