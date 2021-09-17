@@ -36,6 +36,6 @@ export enum EventList {
     KILL_SPIDER = 'KILL_SPIDER',
     HERO_JUMP = 'HERO_JUMP',
     OPEN_DOOR = 'OPEN_DOOR',
-    GET_KEY = 'GET_KEY'
-
+    GET_KEY = 'GET_KEY',
+    GAME_END = 'GAME_END'
 }

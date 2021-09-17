@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { AssetsList, EventList, ScenesList } from '../consts';
+import { StartModel } from '../models/start.model';
 import { ScoreContainer } from '../ui/score.container';
 
 export class UIScene extends Scene {
@@ -36,6 +37,15 @@ export class UIScene extends Scene {
         });
         // -- Gestion de la porte
         this.game.events.on(EventList.OPEN_DOOR, () => this.sound.play(AssetsList.SND_Door));
+        // -- Gestion de la fin du jeu
+        this.game.events.on(EventList.GAME_END, (data: StartModel) => {
+            // Il n'a plus la clé
+            this.scoreContainer.HasKey = false;
+            // S'il a perdu, il n'a plus de pièce
+            if (data.lost) {
+                this.scoreContainer.value = 0;
+            }
+        });
 
     }
 

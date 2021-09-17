@@ -19,7 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
         default: 'arcade', // Phaser intègre un moteur physique par défaut. N'ayant pas eu l'occasion de tester d'autres, je laisse celui par défaut.
         arcade: {
             gravity: { y: 1200 }, // Ce moteur permet de gérer la gravité 
-            debug: true
+            debug: false
         }
     },
     // Remplacement de HelloWorld par les nouvelles 
