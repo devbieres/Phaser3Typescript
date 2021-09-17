@@ -3,7 +3,9 @@ import { AssetsList, EventList, ScenesList } from '../consts'
 import { Coin } from '../entities/coin';
 import { EnemyWall, EnemyWallSide } from '../entities/enemyWall';
 import { Hero } from '../entities/hero';
+import { Key } from '../entities/key';
 import { Spider } from '../entities/spider';
+import { Door } from "../entities/door";
 import { CoinModel } from '../models/coin.model';
 import { LevelModel } from '../models/level.model';
 import { PlatformModel } from '../models/plateform.model';
@@ -26,6 +28,12 @@ export class LevelOneScene extends Phaser.Scene {
     // Variable contenant le hero.
     // Elle est marqué ! car elle sera normalement tout le temps instanciée.
     protected _hero!: Hero;
+
+    // Clé
+    protected _key!: Key;
+
+    // Porte
+    protected _door!: Door;
 
     constructor() {
         super(ScenesList.Level1Scene);
@@ -67,6 +75,31 @@ export class LevelOneScene extends Phaser.Scene {
         this.physics.add.collider(this._spider, this._enemyWalls);
         // -- Hero avec araignés
         this.physics.add.overlap(this._hero, this._spider, this._handleHeroAndSpider, null, this);
+        // -- Hero avec la clé
+        this.physics.add.overlap(this._hero, this._key, () => {
+            // Mise à jour du hero
+            this._hero.HasKey = true;
+            // Suppression de la clé
+            this._key.destroy();
+            // Event
+            this.game.events.emit(EventList.GET_KEY);
+        });
+        // -- Hero avec la porte
+        this.physics.add.overlap(this._hero, this._door,
+            // Gestion de la collision                
+            () => {
+                // Event
+                this.game.events.emit(EventList.OPEN_DOOR);
+                // Relance du jeu
+                this.scene.restart();
+            },
+            // Est-ce qu'il faut gérer la collision
+            () => {
+                // Oui, si le hero a la clé et qu'il touche le sol
+                // On prend pas la porte par le dessus !
+                return this._hero.HasKey && this._hero.body.touching.down;
+            }
+        )
     }
 
     /**
@@ -75,6 +108,10 @@ export class LevelOneScene extends Phaser.Scene {
     private _createLevel(data: LevelModel) {
         // Gestion des plateformes
         data.platforms.forEach(this._createPlatform, this);
+
+        // Gestion de la porte et de la clé
+        this._door = new Door(this, data.door);
+        this._key = new Key(this, data.key);
 
         // Gestion du heros
         this._hero = new Hero(this, data.hero);

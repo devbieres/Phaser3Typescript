@@ -29,7 +29,13 @@ export class UIScene extends Scene {
         this.game.events.on(EventList.HERO_JUMP, () => this.sound.play(AssetsList.SND_Jump));
         // -- Kill a spider
         this.game.events.on(EventList.KILL_SPIDER, () => this.sound.play(AssetsList.SND_Stomp));
-
+        // -- Récupération de la clé
+        this.game.events.on(EventList.GET_KEY, () => {
+            this.sound.play(AssetsList.SND_Key);
+            this.scoreContainer.HasKey = true;
+        });
+        // -- Gestion de la porte
+        this.game.events.on(EventList.OPEN_DOOR, () => this.sound.play(AssetsList.SND_Door));
 
     }
 

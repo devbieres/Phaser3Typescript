@@ -32,6 +32,11 @@ export class LoadingScene extends Phaser.Scene {
         // Vu que les codes sont dans les images, l'utilisation d'enum n'était peut-être
         // pas nécessaire.
 
+        // Clé & Porte
+        this.load.spritesheet(AssetsList.SPRITESHEET_Door, 'images/door.png', { frameWidth: 42, frameHeight: 66 });
+        this.load.image(AssetsList.IMG_Key, 'images/key.png');
+        this.load.spritesheet(AssetsList.SPRITESHEET_KeyIcon, 'images/key_icon.png', { frameWidth: 34, frameHeight: 30 });
+
         // Gestion du heros
         // this.load.image(AssetsList.IMG_Hero, 'images/hero_stopped.png');
         this.load.spritesheet(AssetsList.SPRITESHEET_Hero, 'images/hero.png', { frameWidth: 36, frameHeight: 42 });
@@ -55,6 +60,8 @@ export class LoadingScene extends Phaser.Scene {
         this.load.audio(AssetsList.SND_Coin, 'audio/coin.wav');
         this.load.audio(AssetsList.SND_Jump, 'audio/jump.wav');
         this.load.audio(AssetsList.SND_Stomp, 'audio/stomp.wav');
+        this.load.audio(AssetsList.SND_Door, 'audio/door.wav');
+        this.load.audio(AssetsList.SND_Key, 'audio/key.wav');
 
     }
 

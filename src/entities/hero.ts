@@ -19,6 +19,11 @@ export class Hero extends Physics.Arcade.Sprite {
     static readonly BOUNCE_SPEED = 200;
     static readonly JUMP = 600;
 
+    // Vrai si le joueur à collecter la clé
+    private _hasKey: boolean = false;
+    public get HasKey(): boolean { return this._hasKey; }
+    public set HasKey(value: boolean) { this._hasKey = value; }
+
     // Accès au clavier
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 
@@ -100,8 +105,10 @@ export class Hero extends Physics.Arcade.Sprite {
     protected checkFlip(): void {
         if (this.body.velocity.x < 0) {
             this.scaleX = -1;
+            this.body.setOffset(this.width, 0);
         } else {
             this.scaleX = 1;
+            this.body.setOffset(0, 0);
         }
     }
 
