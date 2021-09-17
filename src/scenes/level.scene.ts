@@ -11,8 +11,9 @@ import { LevelModel } from '../models/level.model';
 import { PlatformModel } from '../models/plateform.model';
 import { SpiderModel } from '../models/spider.model';
 import { StartModel } from '../models/start.model';
+import { Platform } from "../entities/platform";
 
-export class LevelOneScene extends Phaser.Scene {
+export class LevelScene extends Phaser.Scene {
 
     private currentLevel = 0;
 
@@ -37,7 +38,7 @@ export class LevelOneScene extends Phaser.Scene {
     protected _door!: Door;
 
     constructor() {
-        super(ScenesList.Level1Scene);
+        super(ScenesList.LevelScene);
     }
 
     /**
@@ -128,24 +129,21 @@ export class LevelOneScene extends Phaser.Scene {
 
     }
 
+    /**
+     * Crée la plateforme ainsi que les murs invisibles
+     * @param platformModel 
+     */
     private _createPlatform(platformModel: PlatformModel) {
         // ---- Création de la plateforme
-        // Les platesformes devant être physics, elles sont ajoutées à cette dimension
-        const sprite = this.physics.add.sprite(platformModel.x, platformModel.y, platformModel.image);
-        // Par contre, pour éviter qu'elle tombe, il faut leur dire que la gravité n'a pas d'impact
-        sprite.body.setAllowGravity(false);
-        // Et pour éviter que si quelqu'un marche dessus, la plateforme glisse
-        sprite.body.setImmovable(true);
-        // Pour que le placement soit cohérent
-        sprite.setOrigin(0, 0);
+        const platform = new Platform(this, platformModel);
         // Ajout au tableau
-        this._plateforms.push(sprite);
+        this._plateforms.push(platform);
 
         // --- Création des murs invisibles
         // de chaque côté de la plateforme
         this._enemyWalls.push(
-            new EnemyWall(this, sprite.x, sprite.y, EnemyWallSide.left),
-            new EnemyWall(this, sprite.x + sprite.width, sprite.y, EnemyWallSide.right)
+            new EnemyWall(this, platform.x, platform.y, EnemyWallSide.left),
+            new EnemyWall(this, platform.x + platform.width, platform.y, EnemyWallSide.right)
         );
     }
 
